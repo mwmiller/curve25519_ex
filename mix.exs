@@ -3,7 +3,7 @@ defmodule Curve25519.Mixfile do
 
   def project do
     [app: :curve25519,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.2",
      name: "Curve25519",
      source_url: "https://github.com/mwmiller/curve25519_ex",
@@ -21,8 +21,7 @@ defmodule Curve25519.Mixfile do
   defp deps do
     [
       {:earmark, "~> 0.2", only: :dev},
-      {:ex_doc, "~> 0.11", only: :dev},
-      {:power_assert, "~> 0.0.8", only: :test},
+      {:ex_doc, "~> 0.12", only: :dev},
     ]
   end
 

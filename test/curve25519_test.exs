@@ -1,5 +1,5 @@
 defmodule Curve25519Test do
-  use PowerAssert
+  use ExUnit.Case
   doctest Curve25519
 
   test "PDF example" do
