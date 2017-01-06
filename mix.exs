@@ -3,15 +3,15 @@ defmodule Curve25519.Mixfile do
 
   def project do
     [app: :curve25519,
-     version: "0.1.3",
-     elixir: "~> 1.3",
+     version: "0.1.4",
+     elixir: "~> 1.4",
      name: "Curve25519",
      source_url: "https://github.com/mwmiller/curve25519_ex",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     description: description,
-     package: package,
-     deps: deps]
+     description: description(),
+     package: package(),
+     deps: deps()]
   end
 
   def application do
