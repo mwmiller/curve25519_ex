@@ -14,30 +14,34 @@ defmodule Curve25519 do
   @a 486_662
 
   defp clamp(c) do
-    c |> band(~~~7)
-      |> band(~~~(128 <<< 8 * 31))
-      |> bor(64 <<< 8 * 31)
+    c
+    |> band(~~~7)
+    |> band(~~~(128 <<< (8 * 31)))
+    |> bor(64 <<< (8 * 31))
   end
 
-  defp square(x), do: x * x # :math.pow yields floats.. and we only need this one
+  # :math.pow yields floats.. and we only need this one
+  defp square(x), do: x * x
 
   defp expmod(_b, 0, _m), do: 1
+
   defp expmod(b, e, m) do
-       t = b |> expmod(div(e, 2), m) |> square |> rem(m)
-       if (e &&& 1) == 1, do: rem(t * b, m), else: t
+    t = b |> expmod(div(e, 2), m) |> square |> rem(m)
+    if (e &&& 1) == 1, do: rem(t * b, m), else: t
   end
 
   defp inv(x), do: x |> expmod(@p - 2, @p)
 
   defp add({xn, zn}, {xm, zm}, {xd, zd}) do
-       x = (xm * xn - zm * zn) |> square |> (&(&1 * 4 * zd)).()
-       z = (xm * zn - zm * xn) |> square |> (&(&1 * 4 * xd)).()
-       {rem(x, @p), rem(z, @p)}
+    x = (xm * xn - zm * zn) |> square |> (&(&1 * 4 * zd)).()
+    z = (xm * zn - zm * xn) |> square |> (&(&1 * 4 * xd)).()
+    {rem(x, @p), rem(z, @p)}
   end
+
   defp double({xn, zn}) do
-       x = (square(xn) - square(zn)) |> square
-       z = 4 * xn * zn * (square(xn) + @a * xn * zn + square(zn))
-      {rem(x, @p),  rem(z, @p)}
+    x = (square(xn) - square(zn)) |> square
+    z = 4 * xn * zn * (square(xn) + @a * xn * zn + square(zn))
+    {rem(x, @p), rem(z, @p)}
   end
 
   defp curve25519(n, base) do
@@ -48,9 +52,10 @@ defmodule Curve25519 do
   end
 
   defp nth_mult(1, basepair), do: basepair
+
   defp nth_mult(n, {one, two}) do
-     {pm, pm1} = n |> div(2) |> nth_mult({one, two})
-     if (n &&& 1) == 1, do: {add(pm, pm1, one), double(pm1)}, else: {double(pm), add(pm, pm1, one)}
+    {pm, pm1} = n |> div(2) |> nth_mult({one, two})
+    if (n &&& 1) == 1, do: {add(pm, pm1, one), double(pm1)}, else: {double(pm), add(pm, pm1, one)}
   end
 
   @doc """
@@ -60,7 +65,8 @@ defmodule Curve25519 do
   """
   @spec generate_key_pair :: {key, key}
   def generate_key_pair do
-    secret = :crypto.strong_rand_bytes(32) # This algorithm is supposed to be resilient against poor RNG, but use the best we can
+    # This algorithm is supposed to be resilient against poor RNG, but use the best we can
+    secret = :crypto.strong_rand_bytes(32)
     {secret, derive_public_key(secret)}
   end
 
@@ -71,12 +77,15 @@ defmodule Curve25519 do
   shared secret which can be derived by the partner in a complementary way.
   """
   @spec derive_shared_secret(key, key) :: key | :error
-  def derive_shared_secret(our_secret, their_public) when byte_size(our_secret) == 32 and byte_size(their_public) == 32 do
-    our_secret |> :binary.decode_unsigned(:little)
-               |> clamp
-               |> curve25519(:binary.decode_unsigned(their_public, :little))
-               |> :binary.encode_unsigned(:little)
+  def derive_shared_secret(our_secret, their_public)
+      when byte_size(our_secret) == 32 and byte_size(their_public) == 32 do
+    our_secret
+    |> :binary.decode_unsigned(:little)
+    |> clamp
+    |> curve25519(:binary.decode_unsigned(their_public, :little))
+    |> :binary.encode_unsigned(:little)
   end
+
   def derive_shared_secret(_ours, _theirs), do: :error
 
   @doc """
@@ -84,11 +93,12 @@ defmodule Curve25519 do
   """
   @spec derive_public_key(key) :: key | :error
   def derive_public_key(our_secret) when byte_size(our_secret) == 32 do
-    our_secret |> :binary.decode_unsigned(:little)
-               |> clamp
-               |> curve25519(9)
-               |> :binary.encode_unsigned(:little)
+    our_secret
+    |> :binary.decode_unsigned(:little)
+    |> clamp
+    |> curve25519(9)
+    |> :binary.encode_unsigned(:little)
   end
-  def derive_public_key(_ours), do: :error
 
+  def derive_public_key(_ours), do: :error
 end
