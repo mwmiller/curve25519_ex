@@ -77,13 +77,13 @@ defmodule Curve25519 do
   shared secret which can be derived by the partner in a complementary way.
   """
   @spec derive_shared_secret(key, key) :: key | :error
-  def derive_shared_secret(our_secret, their_public)
-      when byte_size(our_secret) == 32 and byte_size(their_public) == 32 do
-    our_secret
-    |> :binary.decode_unsigned(:little)
-    |> clamp
-    |> curve25519(:binary.decode_unsigned(their_public, :little))
-    |> :binary.encode_unsigned(:little)
+  def derive_shared_secret(<<our_secret::little-size(256)>>, <<their_public::little-size(256)>>) do
+    shared_secret =
+      our_secret
+      |> clamp
+      |> curve25519(their_public)
+
+    <<shared_secret::little-size(256)>>
   end
 
   def derive_shared_secret(_ours, _theirs), do: :error
@@ -92,12 +92,13 @@ defmodule Curve25519 do
   Derive the public key from a secret key
   """
   @spec derive_public_key(key) :: key | :error
-  def derive_public_key(our_secret) when byte_size(our_secret) == 32 do
-    our_secret
-    |> :binary.decode_unsigned(:little)
-    |> clamp
-    |> curve25519(9)
-    |> :binary.encode_unsigned(:little)
+  def derive_public_key(<<our_secret::little-size(256)>>) do
+    public_key =
+      our_secret
+      |> clamp
+      |> curve25519(9)
+
+    <<public_key::little-size(256)>>
   end
 
   def derive_public_key(_ours), do: :error
