@@ -17,7 +17,7 @@ defmodule Curve25519.Mixfile do
   end
 
   def application do
-    []
+    [extra_applications: [:crypto]]
   end
 
   defp deps do
