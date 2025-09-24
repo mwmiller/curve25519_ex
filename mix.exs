@@ -1,4 +1,4 @@
-defmodule Curve25519.Mixfile do
+defmodule Curve25519.MixProject do
   use Mix.Project
 
   def project do
@@ -22,7 +22,7 @@ defmodule Curve25519.Mixfile do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.23", only: :dev},
+      {:ex_doc, "~> 0.23", only: :dev}
     ]
   end
 
