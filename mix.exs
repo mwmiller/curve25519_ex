@@ -4,7 +4,7 @@ defmodule Curve25519.MixProject do
   def project do
     [
       app: :curve25519,
-      version: "1.0.5",
+      version: "1.0.6",
       elixir: "~> 1.7",
       name: "Curve25519",
       source_url: "https://github.com/mwmiller/curve25519_ex",
